@@ -1,6 +1,8 @@
 [submodule "Coffee-Api"]
 	path = Coffee-Api
 	url = https://github.com/Emalikz/Coffee-Api.git
+	branch = main
 [submodule "Coffee-front"]
 	path = Coffee-front
 	url = https://github.com/Emalikz/Coffee-front.git
+	branch = main
