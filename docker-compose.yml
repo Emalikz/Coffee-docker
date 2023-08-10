@@ -1,0 +1,57 @@
+version: '3'
+networks:
+  app:
+
+services:
+  backend_app:
+    build:
+      context: ./Coffee-Api/dockerfiles
+      dockerfile: nginx.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    ports:
+      - "80:80"
+    volumes:
+      - ./Coffee-api:/var/www/html
+    depends_on:
+      - php
+      - mysql
+    networks:
+      - app
+  mysql:
+    image: mariadb:10.6
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DATABASE:-homestead}
+      MYSQL_USER: ${DATABASE_USER:-homestead}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD_ROOT:-secret}
+    networks:
+      - app
+  php:
+    build:
+      context: ./Coffee-Api/dockerfiles
+      dockerfile: php.dockerfile
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./Coffee-api:/var/www/html
+    networks:
+      - app
+  node:
+    build:
+      context: ./Coffee-front/
+      dockerfile: node.dockerfile
+    ports:
+      - 4200:4200
+    volumes:
+      - ./Coffee-front/.:/usr/src/app
+    networks:
+      - app
