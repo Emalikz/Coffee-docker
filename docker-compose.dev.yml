@@ -16,6 +16,19 @@ services:
       - ./Coffee-api:/var/www/html
     depends_on:
       - homecare_backend
+      - homecare_database
+    networks:
+      - app
+  homecare_database:
+    image: mariadb:10.6
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DATABASE:-homestead}
+      MYSQL_USER: ${DATABASE_USER:-homestead}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD_ROOT:-secret}
     networks:
       - app
   homecare_backend:
@@ -29,5 +42,15 @@ services:
       - "9000:9000"
     volumes:
       - ./Coffee-api:/var/www/html
+    networks:
+      - app
+  homecare_frontend:
+    build:
+      context: ./Coffee-front/
+      dockerfile: node.dockerfile
+    ports:
+      - 4200:4200
+    volumes:
+      - ./Coffee-front/.:/usr/src/app
     networks:
       - app
